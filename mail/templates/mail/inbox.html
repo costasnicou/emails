@@ -2,6 +2,9 @@
 {% load static %}
 
 {% block body %}
+<div class="main">
+
+   
     <h2>{{ request.user.email }}</h2>
 
     <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
@@ -16,8 +19,12 @@
     </div>
 
     <div id="single-email">
-        <button class="not-archived">Archive</button>
-        <button class="archived">Unarchive</button>
+        <div class="email-action-btns">
+            <button class="actionbtn reply btn btn-primary">Reply</button>
+            <button class="actionbtn not-archived btn btn-primary">Archive</button>
+            <button class="actionbtn archived btn btn-primary">Unarchive</button>
+        </div>
+       
         
     </div>
 
@@ -37,6 +44,7 @@
             <input  type="submit" class="compose-submit btn btn-primary"/>
         </form>
     </div>
+</div>
 {% endblock %}
 
 {% block script %}

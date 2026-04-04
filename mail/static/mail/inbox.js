@@ -4,23 +4,29 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', compose_email);
-
+  // document.querySelector('#compose').addEventListener('click', () => compose_email());
+  document.querySelector('#compose').addEventListener('click',() => compose_email('','',''));
   // By default, load the inbox
   load_mailbox('inbox');
   
 });
 
-function compose_email() {
+// original function
+function compose_email(recipients = '', subject = '', body = '') {
     // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
   document.querySelector('#single-email').style.display = 'none';
   
   // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+  document.querySelector('#compose-recipients').value = recipients;
+  document.querySelector('#compose-subject').value = subject;
+  if (document.querySelector('#compose-subject').value.includes('Re: Re:') || document.querySelector('#compose-subject').value.includes('Re:Re:') ){
+
+    document.querySelector('#compose-subject').value=subject.replace("Re: ",'');
+
+  }
+  document.querySelector('#compose-body').value = body;
 
  
 }
@@ -49,6 +55,7 @@ function load_mailbox(mailbox) {
         let emailsWraper = document.querySelector('.emails-wraper');
         emails.forEach(email=>{
           let emailstatus ="";
+          
 
           if(email.read){
             emailstatus="read";
@@ -58,7 +65,7 @@ function load_mailbox(mailbox) {
           }
 
 
-          let html = `<div id="${email.id}" class="email ${emailstatus}"><p><strong>${email.sender}</strong> Subject: ${email.subject} <span class="timestamp">${email.timestamp}</span></p></div>`;
+          let html = `<div id="${email.id}" class="email ${emailstatus}"><p><strong>${mailbox==="sent"?"To":"From"}: </strong>${mailbox==="sent"?email.recipients:email.sender} <strong>Subject: </strong>${email.subject} <span class="timestamp">${email.timestamp}</span></p></div>`;
           emailsWraper.insertAdjacentHTML('beforeend',html);
           
         });
@@ -81,17 +88,21 @@ function load_email(mailbox){
   const emailsWraper = document.querySelector('.emails-wraper');
   const archiveBtn = document.querySelector('.not-archived');
   const unarchiveBtn = document.querySelector('.archived');
+  const replyBtn = document.querySelector('.reply');
   if(mailbox==="inbox"){
     unarchiveBtn.style.display="none";
-    archiveBtn.style.display="block";
+    archiveBtn.style.display="inline-block";
+    replyBtn.style.display="inline-block";
   
   }else if(mailbox==="archive"){
-    unarchiveBtn.style.display="block";
+    unarchiveBtn.style.display="inline-block";
     archiveBtn.style.display="none";
+    replyBtn.style.display="inline-block";
   }
   else if(mailbox==="sent"){
     unarchiveBtn.style.display="none";
     archiveBtn.style.display="none";
+    replyBtn.style.display="none";
   }
   emailsWraper.addEventListener('click',(event)=>{
     const closestChild = event.target.closest('p');
@@ -102,6 +113,7 @@ function load_email(mailbox){
 
       currentEmailId = emailID.replace('mail-', '');
 
+      // changing read status
       fetch(`/emails/${emailID}`, {
         method: 'PUT',
         body: JSON.stringify({
@@ -109,6 +121,7 @@ function load_email(mailbox){
         })
       })
 
+      // fetching email details
       fetch(`/emails/${emailID}`)
       .then(response => response.json())
       .then(email => {
@@ -133,15 +146,17 @@ function load_email(mailbox){
             </div>
           `;
 
+          // hiding all previous emails from the view
           const singleEmails = document.querySelectorAll('.email-wraper')
-
           singleEmails.forEach(single_email => {
             single_email.style.display = "none";
           });
 
         
+
           singleEmailView.insertAdjacentHTML("afterbegin",html);
 
+          // showing a single email
           const singleEmailel = document.querySelector(`#mail-${email.id}`);
           singleEmailel.style.display="block";
 
@@ -167,15 +182,14 @@ function load_email(mailbox){
             };
           }
 
+          replyBtn.onclick = function() {
+            compose_email(email.sender,`Re: ${email.subject}`,`On ${email.timestamp} ${email.sender} wrote: ${email.body}`);
+          };
 
          
-      
-          // ... do something else with email ...
         });
    
-
-
-        return currentEmailId;
+        
     }
 
 
@@ -186,30 +200,34 @@ function load_email(mailbox){
 
   
 }
+
 // SEND EMAIL
 const composeSubmit = document.querySelector('.compose-submit');
 composeSubmit.addEventListener('click',function(e){
+
   e.preventDefault();
   const recipientsValue = document.querySelector('#compose-recipients').value;
   const subjectValue =  document.querySelector('#compose-subject').value;
   const composeBodyValue = document.querySelector('#compose-body').value;
-
-    fetch('/emails', {
-      method: 'POST',
-      body: JSON.stringify({
-          recipients: recipientsValue,
-          subject: subjectValue,
-          body: composeBodyValue,
-      })
+  fetch('/emails', {
+    method: 'POST',
+    body: JSON.stringify({
+        recipients: recipientsValue,
+        subject: subjectValue,
+        body: composeBodyValue,
     })
-    .then(response => response.json())
-    .then(result => {
-      load_mailbox('sent');
-      //  
-    });
+  })
+  .then(response => response.json())
+  .then(result => {
+    load_mailbox('sent');
+    //  
+  });
+
+
+});
 
     
     
-});
+
 
 
