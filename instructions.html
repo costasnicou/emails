@@ -1,13 +1,28 @@
-<!-- SPECIFICATION 1 DONE------
- --------------------------
-----(DONE)-------Send Mail: When a user submits the email composition form, add JavaScript code to actually send the email.
-    A)You’ll likely want to make a POST request to /emails, passing in values for recipients, subject, and body. (DONE)
-    B)Once the email has been sent, load the user’s sent mailbox. (DONE)
--->
 
-<!-- SPECIFICATION 2-------
+
+
+
+
+<!-- PRESENTATION
+ ----------------------- -->
+
+<!--1) ------(DONE)-------Mailbox: When a user visits their Inbox, Sent mailbox, or Archive, load the appropriate mailbox. -->
+
+<!-- 2)(DONE) View Email: When a user clicks on an email, the user should be taken to a view where they see 
+ the content of that email. -->
+
+<!--3) (DONE)-------Send Mail -->
+
+
+<!--4) Archive and Unarchive: Allow users to archive and unarchive emails that they have received. -->
+
+<!--5)   Reply: Allow users to reply to an email. -->
+
+
+ 
+ <!-- SPECIFICATION 2-------
  -------------------------
-------(DONE)-------Mailbox: When a user visits their Inbox, Sent mailbox, or Archive, load the appropriate mailbox.
+
 
 A)---(DONE)-----You’ll likely want to make a GET request to /emails/<mailbox> to request the emails for a particular mailbox. 
 
@@ -40,6 +55,15 @@ E)---(DONE)----Once the email has been clicked on, you should mark the email as 
 PUT request to /emails/<email_id> to update whether an email is read or not.
 -->
 
+<!-- SPECIFICATION 1 DONE------
+ --------------------------
+----(DONE)-------Send Mail: When a user submits the email composition form, add JavaScript code to actually send the email.
+    A)You’ll likely want to make a POST request to /emails, passing in values for recipients, subject, and body. (DONE)
+    B)Once the email has been sent, load the user’s sent mailbox. (DONE)
+-->
+
+
+
 <!-- SPECIFICATION 4----------------
  ------------------------
 Archive and Unarchive: Allow users to archive and unarchive emails that they have received.
@@ -53,6 +77,7 @@ B)----(DONE)---Recall that you can send a PUT request to /emails/<email_id> to m
 C)---(DONE)----Once an email has been archived or unarchived, load the user’s inbox.
 
 -->
+
 
 <!-- SPECIFICATION 5----------------
 -------------------------------
